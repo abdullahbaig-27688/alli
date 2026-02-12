@@ -247,8 +247,8 @@ export default function AlliScreen({ navigation }: AlliScreenProps) {
     setMessages(prev => [...prev, optimisticUser, optimisticAI]);
 
     try {
-      const systemPrompt = 
-`You are Alli, a friendly and supportive nutrition assistant. Your goal is to help people eat better and feel healthier.
+      const systemPrompt =
+        `You are Alli, a friendly and supportive nutrition assistant. Your goal is to help people eat better and feel healthier.
 
 IMPORTANT RULES FOR HOW YOU RESPOND:
 
@@ -285,7 +285,7 @@ IMPORTANT RULES FOR HOW YOU RESPOND:
 
 Remember: Your user might be confused, overwhelmed, or just starting their health journey. Make nutrition feel approachable and doable, not complicated or scary.`;
 
-      
+
       // Filter out pending messages when sending to API
       const messagesToSend = [
         { role: 'system' as const, content: systemPrompt },
@@ -329,7 +329,7 @@ Remember: Your user might be confused, overwhelmed, or just starting their healt
       // 2. Fallback to RAG if needed
       if (!assistantText && RAG_FALLBACK_URL) {
         try {
-          console.log('Falling back to RAG endpoint...');
+          console.log(`Falling back to RAG endpoint: ${RAG_FALLBACK_URL}`);
           const ragRes = await fetch(RAG_FALLBACK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -338,10 +338,17 @@ Remember: Your user might be confused, overwhelmed, or just starting their healt
 
           if (ragRes.ok) {
             const ragJson = await ragRes.json().catch(() => ({}));
+            console.log('RAG Response JSON:', JSON.stringify(ragJson));
             assistantText = String(ragJson.output || ragJson.response || ragJson.text || ragJson.message || (typeof ragJson === 'string' ? ragJson : '')).trim();
+            if (!assistantText) {
+              console.warn('RAG returned success but no text content was found in known fields.');
+            }
+          } else {
+            const errorText = await ragRes.text().catch(() => 'Could not read error body');
+            console.error(`RAG Fallback failed with status ${ragRes.status}:`, errorText);
           }
-        } catch (ragErr) {
-          console.error('RAG Fallback failed:', ragErr);
+        } catch (ragErr: any) {
+          console.error('RAG Fallback execution failed:', ragErr.message || ragErr);
         }
       }
 
@@ -359,7 +366,10 @@ Remember: Your user might be confused, overwhelmed, or just starting their healt
           return [...filtered, aiMessage];
         });
       } else {
-        throw new Error('All assistants failed to respond. Please try again later.');
+        const finalErrorMessage = novitaError
+          ? `Novita failed (${novitaError}) and RAG fallback provided no response.`
+          : 'All assistants failed to respond. Please try again later.';
+        throw new Error(finalErrorMessage);
       }
     } catch (error: any) {
       console.error('Error sending message:', error);
