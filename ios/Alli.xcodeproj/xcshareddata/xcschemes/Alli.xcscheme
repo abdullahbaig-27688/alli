@@ -14,10 +14,17 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+<<<<<<< Updated upstream:ios/Alli.xcodeproj/xcshareddata/xcschemes/Alli.xcscheme
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
                BuildableName = "Alli.app"
                BlueprintName = "Alli"
                ReferencedContainer = "container:Alli.xcodeproj">
+=======
+               BlueprintIdentifier = "425004FC843DA24ADB8CED23384EC72F"
+               BuildableName = "React-RCTFBReactNativeSpec"
+               BlueprintName = "React-RCTFBReactNativeSpec"
+               ReferencedContainer = "container:Pods.xcodeproj">
+>>>>>>> Stashed changes:ios/Pods/Pods.xcodeproj/xcuserdata/gamedistrict.xcuserdatad/xcschemes/React-RCTFBReactNativeSpec.xcscheme
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
