@@ -55,7 +55,8 @@
           "photosPermission": "Allow Alli to access your photos to select food images for nutrition analysis."
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      "expo-av"
     ],
     "extra": {
       "eas": {
